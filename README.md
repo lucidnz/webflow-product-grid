@@ -59,3 +59,4 @@ To do
 * Compile with Babel (and bundle ky dependency)
 * Customisation (currently built for a specific store)
 * Pagination
+* Prices should include compare at price
