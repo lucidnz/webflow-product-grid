@@ -1,0 +1,6 @@
+[data-collection-handle]:not([data-ready]) {
+  display: none;
+}
+.wf-design-mode [data-collection-handle]:not([data-ready]) {
+  display: grid;
+}
