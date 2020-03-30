@@ -1,12 +1,17 @@
 Webflow Product Grid (WIP)
 ==========================
 
-Take a collection from Shopify and render a product grid in Webflow. Add to your
-Head Code section in Webflow the following:
+Render a collection from Shopify as a product grid in Webflow.
+
+
+Custom code
+-----------
+
+Add to your **Head Code** section:
 
     <link href="https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid/dist/productGrid.css" rel="stylesheet" />
 
-And to the Footer Code section:
+And to your **Footer Code** section:
 
     <script src="https://cdn.jsdelivr.net/npm/ky@0.19.0/umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid/dist/productGrid.js"></script>
@@ -21,7 +26,11 @@ And to the Footer Code section:
       }
     </script>
 
-In Webflow Designer, create a grid element with the following data attributes:
+
+Designer
+--------
+
+Create a grid element with the following data attributes:
 
 * `data-collection-handle`
 * `data-per-page` (optional; default 20)
@@ -35,6 +44,13 @@ there should be elements with each of these data attributes:
 * `data-bind="product-image"` (on an `<img>` element)
 * `data-bind="product-title"`
 * `data-bind="product-price"`
+
+
+Loading state
+-------------
+
+When the product grid is ready, a `data-ready` attribute will be added to the
+grid element. You can style a loading state based on this.
 
 
 To do
