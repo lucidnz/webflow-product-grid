@@ -77,6 +77,9 @@ class ProductGrid {
 
     gridItemBindings.externalLink.href = data.onlineStoreUrl;
     gridItemBindings.image.alt = data.variants.edges[0].node.image.altText;
+    // We set the src to '' first to prevent the original src from displaying
+    // while loading the new src.
+    gridItemBindings.image.src = '';
     gridItemBindings.image.src = data.variants.edges[0].node.image.transformedSrc;
     gridItemBindings.title.textContent = data.title;
     const compareAtPrice = data.variants.edges[0].node.compareAtPriceV2;

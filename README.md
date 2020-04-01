@@ -68,4 +68,3 @@ To do
 * Customisation (currently built for a specific store)
 * Optional loading state CSS in dist
 * Pagination
-* Prices should include compare at price
