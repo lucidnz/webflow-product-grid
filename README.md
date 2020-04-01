@@ -51,6 +51,7 @@ there should be elements with each of these data attributes:
 * `data-bind="product-image"` (on an `<img>` element)
 * `data-bind="product-title"`
 * `data-bind="product-price"`
+* `data-bind="product-compare-at-price"`
 
 
 Loading state

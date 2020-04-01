@@ -29,28 +29,28 @@ class ProductGrid {
           products(first: ${this.perPage}, query: "${this.query}", sortKey: ${this.sortKey}) {
             edges {
               node {
-                images(first: 1) {
+                onlineStoreUrl
+                title
+                variants(first: 1) {
                   edges {
                     node {
-                      altText
-                      transformedSrc(
-                        maxHeight: 512,
-                        maxWidth: 512,
-                        scale: ${devicePixelRatio > 1 ? 2 : 1},
-                      )
+                      compareAtPriceV2 {
+                        amount
+                      }
+                      image {
+                        altText
+                        transformedSrc(
+                          maxHeight: 512,
+                          maxWidth: 512,
+                          scale: ${devicePixelRatio > 1 ? 2 : 1},
+                        )
+                      }
+                      priceV2 {
+                        amount
+                      }
                     }
                   }
                 }
-                onlineStoreUrl
-                priceRange {
-                  maxVariantPrice {
-                    amount
-                  }
-                  minVariantPrice {
-                    amount
-                  }
-                }
-                title
               }
             }
           }
@@ -76,10 +76,17 @@ class ProductGrid {
     const gridItemBindings = this.findBindingElements(gridItem);
 
     gridItemBindings.externalLink.href = data.onlineStoreUrl;
-    gridItemBindings.image.alt = data.images.edges[0].node.altText;
-    gridItemBindings.image.src = data.images.edges[0].node.transformedSrc;
+    gridItemBindings.image.alt = data.variants.edges[0].node.image.altText;
+    gridItemBindings.image.src = data.variants.edges[0].node.image.transformedSrc;
     gridItemBindings.title.textContent = data.title;
-    gridItemBindings.price.textContent = this.formatPriceRange(data.priceRange);
+    const compareAtPrice = data.variants.edges[0].node.compareAtPriceV2;
+    const price = data.variants.edges[0].node.priceV2;
+    gridItemBindings.price.textContent = this.formatMoney(price.amount);
+    if (compareAtPrice !== null) {
+      gridItemBindings.compareAtPrice.textContent = this.formatMoney(compareAtPrice.amount);
+    } else {
+      gridItemBindings.compareAtPrice.textContent = '';
+    }
 
     return gridItem;
   }
@@ -90,17 +97,7 @@ class ProductGrid {
       image: element.querySelector('[data-bind="product-image"]'),
       title: element.querySelector('[data-bind="product-title"]'),
       price: element.querySelector('[data-bind="product-price"]'),
+      compareAtPrice: element.querySelector('[data-bind="product-compare-at-price"]'),
     };
-  }
-
-  formatPriceRange(priceRange) {
-    const max = priceRange.maxVariantPrice.amount;
-    const min = priceRange.minVariantPrice.amount;
-
-    if (max === min) {
-      return this.formatMoney(min);
-    } else {
-      return `From ${this.formatMoney(min)}`
-    }
   }
 }
