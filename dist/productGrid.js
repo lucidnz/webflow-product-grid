@@ -1,6 +1,5 @@
 class ProductGrid {
   constructor(gridElement, storefrontConfig = window.storefrontConfig) {
-    this.collectionHandle = gridElement.dataset.collectionHandle;
     this.elements = {
       grid: gridElement,
       template: gridElement.children[0],
@@ -10,6 +9,7 @@ class ProductGrid {
       currency: 'NZD',
     }).format;
     this.perPage = parseInt(gridElement.dataset.perPage || 20);
+    this.query = gridElement.dataset.query;
     // https://shopify.dev/docs/storefront-api/reference/object/productsortkeys
     this.sortKey = gridElement.dataset.sortKey || 'ID';
     this.storefront = ky.extend({
@@ -26,33 +26,31 @@ class ProductGrid {
     const {data} = await this.storefront.post('graphql', {
       body: `
         query {
-          collectionByHandle(handle: "${this.collectionHandle}") {
-            products(first: ${this.perPage}, sortKey: ${this.sortKey}) {
-              edges {
-                node {
-                  images(first: 1) {
-                    edges {
-                      node {
-                        altText
-                        transformedSrc(
-                          maxHeight: 512,
-                          maxWidth: 512,
-                          scale: ${devicePixelRatio > 1 ? 2 : 1},
-                        )
-                      }
+          products(first: ${this.perPage}, query: "${this.query}", sortKey: ${this.sortKey}) {
+            edges {
+              node {
+                images(first: 1) {
+                  edges {
+                    node {
+                      altText
+                      transformedSrc(
+                        maxHeight: 512,
+                        maxWidth: 512,
+                        scale: ${devicePixelRatio > 1 ? 2 : 1},
+                      )
                     }
                   }
-                  onlineStoreUrl
-                  priceRange {
-                    maxVariantPrice {
-                      amount
-                    }
-                    minVariantPrice {
-                      amount
-                    }
-                  }
-                  title
                 }
+                onlineStoreUrl
+                priceRange {
+                  maxVariantPrice {
+                    amount
+                  }
+                  minVariantPrice {
+                    amount
+                  }
+                }
+                title
               }
             }
           }
@@ -62,7 +60,7 @@ class ProductGrid {
 
     this.elements.grid.innerHTML = '';
 
-    for (const edge of data.collectionByHandle.products.edges) {
+    for (const edge of data.products.edges) {
       const gridItem = this.cloneTemplate(edge.node);
 
       this.elements.grid.appendChild(gridItem);

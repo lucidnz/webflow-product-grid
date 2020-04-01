@@ -1,7 +1,7 @@
 Webflow Product Grid (WIP)
 ==========================
 
-Render a collection from Shopify as a product grid in Webflow.
+Render products from Shopify as a product grid in Webflow.
 
 
 Custom code
@@ -16,15 +16,17 @@ And to your **Footer Code** section:
     <script src="https://cdn.jsdelivr.net/npm/ky@0.19.0/umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid/dist/productGrid.js"></script>
     <script>
-      for (const gridElement of document.querySelectorAll('[data-collection-handle]')) {
-        const productGrid = new ProductGrid(gridElement, {
-          myshopifyDomain: '...',
-          storefrontAccessToken: '...',
-        });
-
-        productGrid.init();
+      window.storefrontConfig = {
+        myshopifyDomain: '...',
+        storefrontAccessToken: '...',
+      };
+      for (const gridElement of document.querySelectorAll('[data-product-grid]')) {
+        new ProductGrid(gridElement).init();
       }
     </script>
+
+You can also pass the `storefrontConfig` object as a second argument to the
+constructor for `ProductGrid`.
 
 
 Designer
@@ -32,9 +34,14 @@ Designer
 
 Create a grid element with the following data attributes:
 
-* `data-collection-handle`
+* `data-product-grid` (**required;** boolean; identifies a product grid)
 * `data-per-page` (optional; default 20)
-* `data-sort-key` (optional; default ID, see the GraphQL API for options)
+* `data-query` (**required;** see the [GraphQL API][1] and [Shopify API search syntax][2])
+* `data-sort-key` (optional; default ID, see the [GraphQL API][3] for options)
+
+[1]: https://shopify.dev/docs/storefront-api/reference/queryroot#products-2020-01
+[2]: https://shopify.dev/concepts/about-apis/search-syntax
+[3]: https://shopify.dev/docs/storefront-api/reference/object/productsortkeys
 
 The first child of the grid element is a template. All children will be replaced
 when the live product data is pulled from the Storefront API. Under the template
