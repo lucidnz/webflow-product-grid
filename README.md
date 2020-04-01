@@ -29,6 +29,15 @@ You can also pass the `storefrontConfig` object as a second argument to the
 constructor for `ProductGrid`.
 
 
+### CDN URLs
+
+It is recommended that you append the commit hash to the CDN URLs above to lock
+the assets and prevent future changes breaking your website, for example:
+
+    https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid@d4246e2b395c0b104bc69be5786f7261db24c934/dist/productGrid.css
+    https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid@d4246e2b395c0b104bc69be5786f7261db24c934/dist/productGrid.js
+
+
 Designer
 --------
 
