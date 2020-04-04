@@ -3,6 +3,12 @@ Webflow Product Grid (WIP)
 
 Render products from Shopify as a product grid in Webflow.
 
+1. [Custom code](#custom-code)
+    - [CDN URLs](#cdn-urls)
+    - [Events](#events)
+2. [Designer](#designer)
+3. [To do](#to-do)
+
 
 Custom code
 -----------
