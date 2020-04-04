@@ -64,7 +64,6 @@ class ProductGrid {
     const loadEvent = new Event('ProductGridLoad');
     const loadImagesEvent = new Event('ProductGridLoadImages');
 
-    // Promise resolves when all images have loaded.
     return new Promise(resolve => {
       const loaded = [];
       const onLoad = event => {
