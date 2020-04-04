@@ -58,29 +58,42 @@ class ProductGrid {
       `,
     }).json();
 
+    // Remove template/placeholder content.
     this.elements.grid.innerHTML = '';
 
-    for (const edge of data.products.edges) {
-      const gridItem = this.cloneTemplate(edge.node);
+    // Promise resolves when all images have loaded.
+    return new Promise(resolve => {
+      const loaded = [];
+      const onLoad = event => {
+        loaded.push(event.target);
 
-      this.elements.grid.appendChild(gridItem);
-    }
+        if (loaded.length === data.products.edges.length) {
+          this.elements.grid.dataset.ready = '';
 
-    // TODO: Loading state styles before ready.
-    // TODO: Only set this when the new images have loaded if possible.
-    this.elements.grid.dataset.ready = '';
+          resolve();
+        }
+      };
+
+      for (const edge of data.products.edges) {
+        const gridItem = this.cloneTemplate(edge.node, onLoad);
+
+        this.elements.grid.appendChild(gridItem);
+      }
+    });
   }
 
-  cloneTemplate(data) {
+  cloneTemplate(data, onLoad) {
     const gridItem = this.elements.template.cloneNode(true);
     const gridItemBindings = this.findBindingElements(gridItem);
 
     gridItemBindings.externalLink.href = data.onlineStoreUrl;
-    gridItemBindings.image.alt = data.variants.edges[0].node.image.altText;
-    // We set the src to '' first to prevent the original src from displaying
-    // while loading the new src.
-    gridItemBindings.image.src = '';
-    gridItemBindings.image.src = data.variants.edges[0].node.image.transformedSrc;
+    const newImage = document.createElement('img');
+    // Attach listeners before setting src to ensure they are called.
+    newImage.addEventListener('error', onLoad); // treat as load
+    newImage.addEventListener('load', onLoad);
+    newImage.alt = data.variants.edges[0].node.image.altText;
+    newImage.src = data.variants.edges[0].node.image.transformedSrc;
+    gridItemBindings.image.replaceWith(newImage);
     gridItemBindings.title.textContent = data.title;
     const compareAtPrice = data.variants.edges[0].node.compareAtPriceV2;
     const price = data.variants.edges[0].node.priceV2;

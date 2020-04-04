@@ -28,6 +28,11 @@ And to your **Footer Code** section:
 You can also pass the `storefrontConfig` object as a second argument to the
 constructor for `ProductGrid`.
 
+The `init` method returns a promise which is resolved when all the data and all
+product images have been loaded. A `data-ready` boolean attribute is also set on
+the grid element at this time. You can use the presence of the latter to style a
+loading state.
+
 
 ### CDN URLs
 
@@ -63,17 +68,11 @@ there should be elements with each of these data attributes:
 * `data-bind="product-compare-at-price"`
 
 
-Loading state
--------------
-
-When the product grid is ready, a `data-ready` attribute will be added to the
-grid element. You can style a loading state based on this.
-
-
 To do
 -----
 
 * Compile with Babel (and bundle ky dependency)
 * Customisation (currently built for a specific store)
 * Optional loading state CSS in dist
-* Pagination (via 'load more' button)
+* Pagination via `loadMore` method with options `{append: true|false}` and
+  returning a promise like `init`
