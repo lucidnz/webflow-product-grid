@@ -57,6 +57,11 @@ the grid element.
 * `ProductGridLoad` – product content has loaded
 * `ProductGridLoadImages` – product content and images have loaded
 
+As a convenience, the `on` method is provided for `ProductGrid` objects, and
+forwards to the underlying grid element:
+
+    productGrid.on('ProductGridLoad', listener);
+
 
 Designer
 --------

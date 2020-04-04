@@ -61,32 +61,35 @@ class ProductGrid {
     // Remove template/placeholder content.
     this.elements.grid.innerHTML = '';
 
-    const loadEvent = new Event('ProductGridLoad');
-    const loadImagesEvent = new Event('ProductGridLoadImages');
+    const eventLoad = new Event('ProductGridLoad');
+    const eventLoadImages = new Event('ProductGridLoadImages');
+    const loaded = [];
+    const onLoad = event => {
+      loaded.push(event.target);
 
-    return new Promise(resolve => {
-      const loaded = [];
-      const onLoad = event => {
-        loaded.push(event.target);
-
-        if (loaded.length === data.products.edges.length) {
-          this.elements.grid.dataset.ready = '';
-          // Event: Content and images have loaded.
-          this.elements.grid.dispatchEvent(loadImagesEvent);
-
-          resolve();
-        }
-      };
-
-      for (const edge of data.products.edges) {
-        const gridItem = this.cloneTemplate(edge.node, onLoad);
-
-        this.elements.grid.appendChild(gridItem);
+      if (loaded.length === data.products.edges.length) {
+        this.elements.grid.dataset.ready = '';
+        // Event: Content and images have loaded.
+        this.elements.grid.dispatchEvent(eventLoadImages);
       }
+    };
+    // Promise is equivalent to 'ProductGridLoadImages' event.
+    const promise = new Promise(resolve => this.on('ProductGridLoadImages', () => resolve()));
 
-      // Event: Content has loaded.
-      this.elements.grid.dispatchEvent(loadEvent);
-    });
+    for (const edge of data.products.edges) {
+      const gridItem = this.cloneTemplate(edge.node, onLoad);
+
+      this.elements.grid.appendChild(gridItem);
+    }
+
+    // Event: Content has loaded.
+    this.elements.grid.dispatchEvent(eventLoad);
+
+    return promise;
+  }
+
+  on(type, listener) {
+    this.elements.grid.addEventListener(type, listener);
   }
 
   cloneTemplate(data, onLoad) {
