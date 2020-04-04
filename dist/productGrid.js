@@ -61,6 +61,9 @@ class ProductGrid {
     // Remove template/placeholder content.
     this.elements.grid.innerHTML = '';
 
+    const loadEvent = new Event('ProductGridLoad');
+    const loadImagesEvent = new Event('ProductGridLoadImages');
+
     // Promise resolves when all images have loaded.
     return new Promise(resolve => {
       const loaded = [];
@@ -69,6 +72,8 @@ class ProductGrid {
 
         if (loaded.length === data.products.edges.length) {
           this.elements.grid.dataset.ready = '';
+          // Event: Content and images have loaded.
+          this.elements.grid.dispatchEvent(loadImagesEvent);
 
           resolve();
         }
@@ -79,6 +84,9 @@ class ProductGrid {
 
         this.elements.grid.appendChild(gridItem);
       }
+
+      // Event: Content has loaded.
+      this.elements.grid.dispatchEvent(loadEvent);
     });
   }
 

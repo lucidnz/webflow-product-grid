@@ -43,6 +43,15 @@ the assets and prevent future changes breaking your website, for example:
     https://cdn.jsdelivr.net/gh/lucidnz/webflow-product-grid@d4246e2b395c0b104bc69be5786f7261db24c934/dist/productGrid.js
 
 
+### Events
+
+In addition to the promise returned from `init`, two events are dispatched from
+the grid element.
+
+* `ProductGridLoad` – product content has loaded
+* `ProductGridLoadImages` – product content and images have loaded
+
+
 Designer
 --------
 
