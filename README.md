@@ -63,10 +63,10 @@ Designer
 
 Create a grid element with the following data attributes:
 
-* `data-product-grid` (**required;** boolean; identifies a product grid)
-* `data-per-page` (optional; default 20)
-* `data-query` (**required;** see the [GraphQL API][1] and [Shopify API search syntax][2])
-* `data-sort-key` (optional; default ID, see the [GraphQL API][3] for options)
+* `data-product-grid` – **required;** boolean; identifies a product grid
+* `data-per-page` – optional; default 20
+* `data-query` – **required;** see the [GraphQL API][1] and [Shopify API search syntax][2]
+* `data-sort-key` – optional; default ID, see the [GraphQL API][3] for options
 
 [1]: https://shopify.dev/docs/storefront-api/reference/queryroot#products-2020-01
 [2]: https://shopify.dev/concepts/about-apis/search-syntax
@@ -76,8 +76,8 @@ The first child of the grid element is a template. All children will be replaced
 when the live product data is pulled from the Storefront API. Under the template
 there should be elements with each of these data attributes:
 
-* `data-bind="product-external-link"` (on an `<a>` element)
-* `data-bind="product-image"` (on an `<img>` element)
+* `data-bind="product-external-link"` – on an `<a>` element
+* `data-bind="product-image"` – on an `<img>` element
 * `data-bind="product-title"`
 * `data-bind="product-price"`
 * `data-bind="product-compare-at-price"`
