@@ -36,7 +36,7 @@ class ProductGrid {
     });
   }
 
-  async next({append = true, render = true}) {
+  async next({append = true, render = true} = {}) {
     if (!this.hasNextPage) {
       return Promise.resolve([]);
     }
