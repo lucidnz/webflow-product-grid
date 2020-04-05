@@ -8,7 +8,10 @@ Render products from Shopify as a product grid in Webflow.
     - [Events](#events)
     - [Ready state attributes](#ready-state-attributes)
 2. [Designer](#designer)
-3. [To do](#to-do)
+3. [Examples](#examples)
+    - [Paginating a product grid](#paginating-a-product-grid)
+    - [Paginating a product slider](#paginating-a-product-slider)
+4. [To do](#to-do)
 
 
 Custom code
@@ -104,6 +107,70 @@ there should be elements with any of these data attributes:
 * `data-bind="product-compare-at-price"`
 
 Each element is optional, and will only be used if present in the template.
+
+
+Examples
+--------
+
+### Paginating a product grid
+
+Load a new page when a load more button is clicked.
+
+    function initGrid(element) {
+      const productGrid = new ProductGrid(element);
+
+      productGrid.init();
+
+      const loadMoreButton = element.nextSibling;
+      const loadingState = () => {
+        loadMoreButton.disabled = true;
+        loadMoreButton.textContent = 'Loading products';
+      };
+      const readyState = () => {
+        if (productGrid.hasNextPage) {
+          loadMoreButton.disabled = false;
+          loadMoreButton.textContent = 'Load more';
+        } else {
+          loadMoreButton.textContent = 'No more products';
+        }
+      };
+      loadingState();
+      loadMoreButton.addEventListener('click', () => {
+        loadingState();
+        productGrid.next({});
+      });
+      productGrid.on('ProductGridLoadImages', () => {
+        readyState();
+      });
+    }
+
+
+### Paginating a product slider
+
+Load a new page when the slider reaches the last slide. This example makes use
+of [Glider.js][4], but the same principle should apply to other sliders.
+
+    async function initSlider(element) {
+      const productGrid = new ProductGrid(element);
+
+      await productGrid.init();
+
+      const glider = new Glider(element, {
+        slidesToScroll: 1,
+        slidesToShow: 5,
+      });
+      const isLastSlide = slide =>
+        slide + 1 === glider.slides.length;
+      element.addEventListener('glider-slide-visible', async ({detail: {slide}}) => {
+        if (isLastSlide(slide)) {
+          const items = await productGrid.next({render: false});
+
+          items.forEach(glider.addItem);
+        }
+      });
+    }
+
+[4]: https://nickpiscitelli.github.io/Glider.js/
 
 
 To do
