@@ -1,5 +1,6 @@
 class ProductGrid {
   constructor(gridElement, storefrontConfig = window.storefrontConfig) {
+    this.cursor = null;
     this.elements = {
       grid: gridElement,
       template: gridElement.children[0],
@@ -15,7 +16,6 @@ class ProductGrid {
     this.storefront = ky.extend({
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/graphql',
         'X-Shopify-Storefront-Access-Token': storefrontConfig.storefrontAccessToken,
       },
       prefixUrl: `https://${storefrontConfig.myshopifyDomain}/api/2020-01`,
@@ -24,39 +24,62 @@ class ProductGrid {
 
   async init() {
     const {data} = await this.storefront.post('graphql', {
-      body: `
-        query {
-          products(first: ${this.perPage}, query: "${this.query}", sortKey: ${this.sortKey}) {
-            edges {
-              node {
-                onlineStoreUrl
-                title
-                variants(first: 1) {
-                  edges {
-                    node {
-                      compareAtPriceV2 {
-                        amount
-                      }
-                      image {
-                        altText
-                        transformedSrc(
-                          maxHeight: 512,
-                          maxWidth: 512,
-                          scale: ${devicePixelRatio > 1 ? 2 : 1},
-                        )
-                      }
-                      priceV2 {
-                        amount
-                      }
-                    }
-                  }
+      json: {
+        query: `
+          query ProductPage($cursor: String, $perPage: Int!, $query: String!, $scale: Int!, $sortKey: ProductSortKeys!) {
+            products(after: $cursor, first: $perPage, query: $query, sortKey: $sortKey) {
+              edges {
+                cursor
+                node {
+                  ...productFields
+                }
+              }
+              pageInfo {
+                hasNextPage
+              }
+            }
+          }
+
+          fragment productFields on Product {
+            onlineStoreUrl
+            title
+            variants(first: 1) {
+              edges {
+                node {
+                  ...variantFields
                 }
               }
             }
           }
-        }
-      `,
+
+          fragment variantFields on ProductVariant {
+            compareAtPriceV2 {
+              amount
+            }
+            image {
+              altText
+              transformedSrc(
+                maxHeight: 512,
+                maxWidth: 512,
+                scale: $scale,
+              )
+            }
+            priceV2 {
+              amount
+            }
+          }
+        `,
+        variables: {
+          cursor: this.cursor,
+          perPage: this.perPage,
+          query: this.query,
+          scale: devicePixelRatio > 1 ? 2 : 1,
+          sortKey: this.sortKey,
+        },
+      }
     }).json();
+
+    this.cursor = data.products.edges.slice(-1)[0].cursor;
 
     // State: Loading.
     this.elements.grid.dataset.state = 'loading';
