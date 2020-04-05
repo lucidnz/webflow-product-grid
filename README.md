@@ -139,7 +139,7 @@ Load a new page when a load more button is clicked.
         loadingState();
         productGrid.next({});
       });
-      productGrid.on('ProductGridLoadImages', () => {
+      element.addEventListener('ProductGridLoadImages', () => {
         readyState();
       });
     }
