@@ -1,6 +1,6 @@
-[data-product-grid]:not([data-ready]) {
+[data-product-grid]:not([data-state="ready"]) {
   display: none;
 }
-.wf-design-mode [data-product-grid]:not([data-ready]) {
+.wf-design-mode [data-product-grid]:not([data-state="ready"]) {
   display: grid;
 }
