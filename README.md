@@ -113,3 +113,4 @@ To do
 * Customisation (currently built for a specific store)
 * Optional loading state CSS in dist
 * Properly document all methods and properties
+* Retain existing attributes like `class` on replaced `<img>`
