@@ -35,8 +35,17 @@ Add to your **Footer Code** section:
 The `storefrontConfig` object can also be passed as a second argument to the
 constructor for `ProductGrid`.
 
-The `init` method returns a promise which is resolved when all the data and all
-product images have been loaded.
+The `init` method returns a promise which is resolved with the current page of
+elements when all the data and all product images have been loaded. The `next`
+method behaves the same way (in fact, `init` calls `next`), and can be used to
+load the next page of results. It accepts an options object with the following
+properties:
+
+* `append` – boolean; default true; whether to append or replace contents
+* `render` – boolean; default true; whether to render automatically to the DOM
+
+For example, you may wish to set `render` to false and manually add each element
+to a slider.
 
 
 ### CDN URLs
@@ -50,8 +59,8 @@ the assets and prevent future changes breaking your website, for example:
 
 ### Events
 
-In addition to the promise returned from `init`, two events are dispatched from
-the grid element.
+In addition to the promise returned from `init/next`, two events are dispatched
+from the grid element.
 
 * `ProductGridLoad` – product content has loaded
 * `ProductGridLoadImages` – product content and images have loaded
@@ -103,5 +112,4 @@ To do
 * Compile with Babel (and bundle ky dependency)
 * Customisation (currently built for a specific store)
 * Optional loading state CSS in dist
-* Pagination via `loadMore` method with options `{append: true|false}` and
-  returning a promise like `init`
+* Properly document all methods and properties

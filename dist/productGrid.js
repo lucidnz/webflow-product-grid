@@ -1,5 +1,6 @@
 class ProductGrid {
   constructor(gridElement, storefrontConfig = window.storefrontConfig) {
+    this.currentPage = [];
     this.cursor = null;
     this.elements = {
       grid: gridElement,
@@ -9,6 +10,7 @@ class ProductGrid {
       style: 'currency',
       currency: 'NZD',
     }).format;
+    this.hasNextPage = true;
     this.perPage = parseInt(gridElement.dataset.perPage || 20);
     this.query = gridElement.dataset.query;
     // https://shopify.dev/docs/storefront-api/reference/object/productsortkeys
@@ -20,9 +22,32 @@ class ProductGrid {
       },
       prefixUrl: `https://${storefrontConfig.myshopifyDomain}/api/2020-01`,
     });
+
   }
 
-  async init() {
+  init() {
+    this.currentPage = [];
+    this.cursor = null;
+    this.hasNextPage = true;
+
+    return this.next({
+      append: false,
+      render: true,
+    });
+  }
+
+  async next({append = true, render = true}) {
+    if (!this.hasNextPage) {
+      return Promise.resolve([]);
+    }
+
+    if (!append) {
+      this.elements.grid.innerHTML = '';
+    }
+
+    // State: Loading.
+    this.elements.grid.dataset.state = 'loading';
+
     const {data} = await this.storefront.post('graphql', {
       json: {
         query: `
@@ -79,12 +104,13 @@ class ProductGrid {
       }
     }).json();
 
-    this.cursor = data.products.edges.slice(-1)[0].cursor;
+    // In case there are no products even on the first page.
+    if (data.products.edges.length === 0) {
+      return Promise.resolve([]);
+    }
 
-    // State: Loading.
-    this.elements.grid.dataset.state = 'loading';
-    // Remove template/placeholder content.
-    this.elements.grid.innerHTML = '';
+    this.cursor = data.products.edges.slice(-1)[0].cursor;
+    this.hasNextPage = data.products.pageInfo.hasNextPage;
 
     const eventLoad = new Event('ProductGridLoad');
     const eventLoadImages = new Event('ProductGridLoadImages');
@@ -103,12 +129,15 @@ class ProductGrid {
       }
     };
     // Promise is equivalent to 'ProductGridLoadImages' event.
-    const promise = new Promise(resolve => this.on('ProductGridLoadImages', () => resolve()));
+    const promise = new Promise(resolve => this.on('ProductGridLoadImages', () => resolve(this.currentPage)));
 
-    for (const edge of data.products.edges) {
-      const item = this.cloneTemplate(edge.node, onLoad);
-
-      this.elements.grid.appendChild(item);
+    this.currentPage = data.products.edges.map(edge => {
+      return this.cloneTemplate(edge.node, onLoad);
+    });
+    if (render) {
+      this.currentPage.forEach(item => {
+        this.elements.grid.appendChild(item);
+      });
     }
 
     // Event: Content has loaded.
@@ -129,7 +158,7 @@ class ProductGrid {
       itemBindings.externalLink.href = data.onlineStoreUrl;
     }
     if (itemBindings.image) {
-      const newImage = document.createElement('img');
+      const newImage = new Image();
       // Attach listeners before setting src to ensure they are called.
       newImage.addEventListener('error', onLoad); // treat as load
       newImage.addEventListener('load', onLoad);

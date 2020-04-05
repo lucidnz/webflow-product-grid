@@ -1,6 +1,13 @@
-[data-product-grid]:not([data-state="ready"]) {
+/* Outside Webflow Designer, hide placeholders/template. */
+html:not(.wf-design-mode) [data-product-grid] > :not([data-state]) {
   display: none;
 }
-.wf-design-mode [data-product-grid]:not([data-state="ready"]) {
-  display: grid;
+
+/* Hide loading items. */
+[data-product-grid] > [data-state="loading"] {
+  display: none;
+}
+/* Hide subsequent siblings of a loading item to prevent shuffling. */
+[data-product-grid] > [data-state="loading"] ~ * {
+  display: none;
 }
