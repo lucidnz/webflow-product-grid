@@ -88,7 +88,7 @@ Designer
 Create a grid element with the following data attributes:
 
 * `data-product-grid` – **required;** boolean; identifies a product grid
-* `data-per-page` – optional; default 20
+* `data-per-page` – optional; default 24
 * `data-query` – **required;** see the [GraphQL API][1] and [Shopify API search syntax][2]
 * `data-sort-key` – optional; default ID, see the [GraphQL API][3] for options
 

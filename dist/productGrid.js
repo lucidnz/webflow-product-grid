@@ -11,7 +11,8 @@ class ProductGrid {
       currency: 'NZD',
     }).format;
     this.hasNextPage = true;
-    this.perPage = parseInt(gridElement.dataset.perPage || 20);
+    // Default of 24 divides into complete rows of 6, 4, 3, and 2 columns.
+    this.perPage = parseInt(gridElement.dataset.perPage || 24);
     this.query = gridElement.dataset.query;
     // https://shopify.dev/docs/storefront-api/reference/object/productsortkeys
     this.sortKey = gridElement.dataset.sortKey || 'ID';
